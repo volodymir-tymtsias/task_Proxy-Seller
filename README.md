@@ -1,12 +1,12 @@
 
 As an API, we use the service https://jsonplaceholder.typicode.com/
 
-### `Technologies used:`
-ReactJS (pure)
-Must be compatible with NodeJS 14 version
-Assembling the project using WebPack
+### Technologies used:
+- ReactJS (pure)
+- Must be compatible with NodeJS 14 version
+- Assembling the project using WebPack
 
-### `Technical Task:`
+### Technical Task:
 On the main page we have a list of users from where we can open the user's posts or albums
 
 There must be access to the content of posts and albums.
