@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+
 As an API, we use the service https://jsonplaceholder.typicode.com/
 
 ### `Technologies used:`
