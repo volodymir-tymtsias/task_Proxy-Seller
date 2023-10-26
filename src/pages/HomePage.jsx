@@ -3,26 +3,38 @@ import debounce from 'lodash.debounce';
 import { Loader } from '../components/Loader';
 import { getUsers } from '../api/api';
 import { UsersTable } from '../components/UsersTable';
+import { useSearchParams } from 'react-router-dom';
+import { getSearchWith } from '../helpers/searchHelper';
 
 export const HomePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isErrorLoading, setIsErrorLoading] = useState(false);
   const [users, setUsers] = useState(null);
-  const [query, setQuery] = useState('');
-  const [appliedQuery, setAppliedQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const appliedQuery = searchParams.get('query')?.trim().toLowerCase();
+  const [query, setQuery] = useState(appliedQuery || '');
   
-  const visibleUsers = useMemo(() => appliedQuery 
+  const visibleUsers = useMemo(() => (appliedQuery && users) 
    ? users.filter(
-      user => user.username.toLowerCase().includes(appliedQuery.trim().toLowerCase())
+      user => user.username.toLowerCase().includes(appliedQuery)
     )
    : users, [appliedQuery, users]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const ApplyQuery = useCallback(debounce(setAppliedQuery, 500), []);
+   const setQuerySearchParams = (value) => {
+    setSearchParams(
+      getSearchWith(
+        searchParams,
+        { query: value || null },
+      ),
+    );
+  };
 
-  const handleQueryChange = (event) => {
-    setQuery(event.target.value);
-    ApplyQuery(event.target.value);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const ApplyQuery = useCallback(debounce(setQuerySearchParams, 500), []);
+
+  const handleQueryChange = ({ target }) => {
+    setQuery(target.value);
+    ApplyQuery(target.value);
   }
 
   useEffect(() => {
@@ -48,7 +60,7 @@ export const HomePage = () => {
 
           <div className="control">
             <input
-              type="text"
+              type="search"
               id="search-query"
               className="input"
               placeholder="Enter a search query"

@@ -1,38 +1,49 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { getSearchWith } from '../helpers/searchHelper';
 
 export const UsersTable = ({ users }) => {
-  const [order, setOrder] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentOrder = searchParams.get('order');
 
   const getClassNamesSort = () => {
     return classNames(
       'fas',
       {
-        'fa-sort': order === null,
-        'fa-sort-up': order === 'asc',
-        'fa-sort-down': order === 'desc',
+        'fa-sort': currentOrder === null,
+        'fa-sort-up': currentOrder === 'asc',
+        'fa-sort-down': currentOrder === 'desc',
       },
     );
   };
 
   const onChangeOrder = () => {
-    setOrder(currentOrder => {
-      switch (currentOrder) {
-        case 'asc':
-          return 'desc';
-      
-        case null:
-          return 'asc';
-      
-        default:
-          return null;
-      }
-    })
+    let newOrder;
+
+    switch (currentOrder) {
+      case 'asc':
+        newOrder = 'desc';
+        break;
+    
+      case null:
+        newOrder = 'asc';
+        break;
+    
+      default:
+        newOrder = null;
+    }
+
+    setSearchParams(
+      getSearchWith(
+        searchParams,
+        { order: newOrder },
+      ),
+    );
   };
 
   const sortUsers = useMemo(() => {
-    switch (order) {
+    switch (currentOrder) {
       case 'asc':
         return [...users].sort((user1, user2) => user1.username.localeCompare(user2.username));
 
@@ -42,7 +53,7 @@ export const UsersTable = ({ users }) => {
       default:
         return users;
     }
-  }, [order, users])
+  }, [currentOrder, users])
 
   return (
     <table
